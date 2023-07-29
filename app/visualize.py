@@ -16,7 +16,7 @@ from skimage.transform import resize
 from torch.autograd import Variable
 
 
-def pred_faceExp(pic_name):
+def pred_faceExp(pic_path, result_path, pic_name):
     cut_size = 44
 
     transform_test = transforms.Compose(
@@ -34,7 +34,7 @@ def pred_faceExp(pic_name):
     def rgb2gray(rgb):
         return np.dot(rgb[..., :3], [0.299, 0.587, 0.114])
 
-    raw_img = io.imread(os.path.join("app/static/cutting_img/", pic_name))
+    raw_img = io.imread(os.path.join(pic_path, pic_name))
     gray = rgb2gray(raw_img)
     gray = resize(gray, (48, 48), mode="symmetric").astype(np.uint8)
 
@@ -49,7 +49,7 @@ def pred_faceExp(pic_name):
     net = VGG("VGG19")
     checkpoint = torch.load(
         os.path.join("app", "model", "PrivateTest_model.t7"),
-        map_location=torch.device("cpu"),
+        map_location=torch.device("cuda"),  # cpu/cuda
     )
     net.load_state_dict(checkpoint["net"])
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -70,17 +70,19 @@ def pred_faceExp(pic_name):
 
     # results img
     plt.rcParams["figure.figsize"] = (13.5, 5.5)
+
+    # 第一張子圖
     axes = plt.subplot(1, 3, 1)
     plt.imshow(raw_img)
     plt.xlabel("Input Image", fontsize=16)
     axes.set_xticks([])
     axes.set_yticks([])
     plt.tight_layout()
-
     plt.subplots_adjust(
         left=0.05, bottom=0.2, right=0.95, top=0.9, hspace=0.02, wspace=0.3
     )
 
+    # 第二張子圖
     plt.subplot(1, 3, 2)
     ind = 0.1 + 0.6 * np.arange(len(class_names))  # the x locations for the groups
     width = 0.4  # the width of the bars: can also be len(x) sequence
@@ -100,11 +102,11 @@ def pred_faceExp(pic_name):
     plt.ylabel(" Classification Score ", fontsize=16)
     plt.xticks(ind, class_names, rotation=45, fontsize=14)
 
+    # 第三張子圖
     axes = plt.subplot(1, 3, 3)
     emojis_img = io.imread(
         "app/static/img/emojis/%s.png" % str(class_names[int(predicted.cpu().numpy())])
     )
-
     plt.imshow(emojis_img)
     plt.xlabel("Emoji Expression", fontsize=16)
     axes.set_xticks([])
@@ -112,8 +114,7 @@ def pred_faceExp(pic_name):
     plt.tight_layout()
     # show emojis
 
-    plt.savefig(os.path.join("app/static/results_img/", os.path.basename(pic_name)))
-
+    plt.savefig(os.path.join(result_path, os.path.basename(pic_name)))
     plt.close()
 
     # csv

@@ -185,18 +185,7 @@ h3 {
   }
 }
 
-.get-started-btn-test {
-  color: #fff;
-  border-radius: 4px;
-  padding: 7px 25px 8px 25px;
-  white-space: nowrap;
-  transition: 0.3s;
-  font-size: 14px;
-  display: inline-block;
-  border: 2px solid #ffc451;
-  /* background-color: #343a40; */
-  background-color: #151515;
-}
+
 
 .get-started-btn-test:hover {
   background: #ffbb38;
@@ -926,14 +915,12 @@ section {
 --------------------------------------------------------------*/
 
 #recorded-video {
-
   width: 100%;
   height: 70vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* height: 70vh; */
-  margin: 74px 0 0 0;
+  margin: auto;
   text-align: center;
 }
 
@@ -945,7 +932,6 @@ section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* margin-top: 74px; */
 }
 
 .button-container {
@@ -954,6 +940,89 @@ section {
 
 .button-container button {
   margin: 0 10px;
+}
+
+.get-started-btn-test {
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  border-radius: 100%;
+  width: 138px;
+  height: 138px;
+  font-size: 22px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgb(188, 180, 164) 0px 0px 0px 1px, rgb(255, 255, 255) 0px 0px 0px 10px;
+  color: rgb(29, 29, 31);
+  margin-inline: auto;
+  margin-bottom: 35px;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  font-weight: bold;
+}
+
+#start-button {
+  display: block;
+}
+
+#stop-button {
+  display: none;
+}
+
+.loading-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  /* 使用 rgba 設定半透明的白色背景 */
+  display: none;
+  z-index: 1;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.loading-content {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.loading-text {
+  font-size: 20px;
+  margin-top: 20px;
+  /* 調整文字與 spinner 圖片之間的間距 */
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* 按鈕的顯示動畫 */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 
@@ -971,27 +1040,25 @@ section {
   justify-content: center;
 }
 
-
-
 /* 電腦顯示 */
 @media (min-width: 768px) {
   .responsive-image {
-    width: 10%;
-    margin: 74px auto 20px;
+    width: 20%;
+    margin: 10px auto;
   }
 
   .carousel-inner .carousel-item .pred-image {
     max-height: 100vh;
-    width: 50%;
-    margin: 0px auto;
+    width: 40%;
+    margin: auto;
   }
 }
 
 /* 手機顯示 */
 @media (max-width: 767px) {
   .responsive-image {
-    width: 60%;
-    margin: 74px auto 20px;
+    width: 90%;
+    margin: 10px auto;
   }
 
   .carousel-inner .carousel-item .pred-image {
@@ -1005,16 +1072,7 @@ section {
   display: block;
 }
 
-#carouselExampleIndicators.blank-image {
-  width: 100%;
-  height: 300px;
-  /* 設定空白圖片的高度 */
-  background-color: #f0f0f0;
-  /* 設定空白圖片的背景顏色 */
-}
-
 #carouselExampleIndicators p {
   font-size: 40px;
   color: white;
-  /* Adding color to the text (optional) */
 }
