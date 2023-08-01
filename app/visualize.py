@@ -49,7 +49,7 @@ def pred_faceExp(pic_path, result_path, pic_name):
     net = VGG("VGG19")
     checkpoint = torch.load(
         os.path.join("app", "model", "PrivateTest_model.t7"),
-        map_location=torch.device("cuda"),  # cpu/cuda
+        map_location=torch.device("cpu"),  # cpu/cuda
     )
     net.load_state_dict(checkpoint["net"])
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

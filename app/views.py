@@ -10,6 +10,8 @@ module_path = os.path.dirname(os.path.abspath(__file__))
 # 將模組所在的目錄路徑加入 Python 的搜尋路徑
 sys.path.append(module_path)
 
+import multiprocessing
+
 import genderAge as modelG
 import matplotlib
 import video_processing
@@ -68,8 +70,14 @@ def upload():
             # Cutting
             video_processing.process_video(output_file, cutting_path)
 
-            # Facial-Expression-Recognition Model
-            prediction(timestamp)
+            # 啟動新的進程來處理 Facial-Expression-Recognition Model 的預測
+            prediction_process = multiprocessing.Process(
+                target=prediction, args=(timestamp,)
+            )
+            prediction_process.start()
+
+            # 等待 prediction_process 執行完畢再返回模板
+            prediction_process.join()
 
         return render_template("recog-result.html", timestamp=session["timestamp"])
 
