@@ -446,7 +446,7 @@ h3 {
 
 #hero .container {
   position: relative;
-  padding-top: 74px;
+  /* padding-top: 74px; */
   text-align: center;
 }
 
@@ -476,8 +476,8 @@ h3 {
 }
 
 #hero .state {
-  margin: 40px;
-  padding: 30px 20px;
+  margin: 20px;
+  padding: 20px 10px;
   transition: ease-in-out 0.3s;
   background-color: rgba(255, 255, 255, 0.3);
   /* border: 3px solid rgba(255, 255, 255, 0.3); */
