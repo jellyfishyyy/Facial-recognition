@@ -45,7 +45,7 @@
     <div id="popup"
       style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; background-color: #fff; border: 1px solid #ccc; padding: 20px; border-radius: 5px; z-index: 9999;">
       <span style="float: right; cursor: pointer;" onclick="closePopup()">X</span>
-      <h3 style="color:black; font-weight:bold;">歡迎來到測試頁面！</h3>
+      <h3 style="color:black; font-weight:bold;">歡迎來到測試頁面</h3>
 
       <p>請允許我們存取您的前鏡頭，並將手機平視臉部，在按下「開始測試」按鈕後，我們將使用您的前鏡頭錄製影片。</p>
 
@@ -152,8 +152,8 @@
         .then(function (stream) {
           recorder = RecordRTC(stream, {
             type: 'video',
-            mimeType: 'video/mp4; codecs="mpeg4, aac"',
-            // mimeType: 'video/webm; codecs="vp9"',
+            mimeType: 'video/webm; codecs="vp8"',
+            // mimeType: 'video/mp4; codecs="mpeg4, aac"',
             videoBitsPerSecond: 3000000, // 設定影片的總位元速率 (bits per second)
             frameRate: 30 // 設定畫格率為30FPS
           });
@@ -166,7 +166,7 @@
     // 上傳影片
     var uploadRecordedVideo = function (blob) {
       var formData = new FormData();
-      formData.append('video', blob, 'recorded-video.mp4');
+      formData.append('video', blob, 'recorded-video.webm');
       var xhr = new XMLHttpRequest();
       xhr.open('POST', '/inner-page', true);
       xhr.onload = function () {

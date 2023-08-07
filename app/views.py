@@ -25,6 +25,7 @@ matplotlib.use("Agg")
 UPLOAD_FOLDER = "app/static/uploaded"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 cutting_path = "app/static/cutting_img/"
+grep_face_path = "app/static/grep_face/"
 result_path = "app/static/results_img/"
 
 
@@ -59,18 +60,35 @@ def upload():
             session["timestamp"] = timestamp  # 存入 session
 
             # 儲存錄影檔
-            filename = f"{timestamp}.mp4"
+            filename = f"{timestamp}.webm"
             file.save(os.path.join(UPLOAD_FOLDER, filename))
 
-            # 錄影檔編碼格式轉換
-            input_file = os.path.join(UPLOAD_FOLDER, filename)
-            output_file = os.path.join("app/static/output_video/", filename)
-            video_processing.convert_video_to_h264(input_file, output_file, 30)
+            # # 錄影檔編碼格式轉換
+            # input_file = os.path.join(UPLOAD_FOLDER, filename)
+            # output_file = os.path.join("app/static/output_video/", filename)
+            # video_processing.convert_video_to_h264(input_file, output_file, 30)
+
+            # # Cutting
+            # video_processing.process_video(output_file, cutting_path)
 
             # Cutting
-            video_processing.process_video(output_file, cutting_path)
+            video_processing.process_video(
+                os.path.join(UPLOAD_FOLDER, filename), cutting_path
+            )
 
-            # 啟動新的進程來處理 Facial-Expression-Recognition Model 的預測
+            # grep face
+            for n in range(5):
+                # 假設每個 segment 最多有 5 張照片
+                for m in range(5):
+                    rec_filename = f"{timestamp}_segment_{n+1}_frame_{m+1}.jpg"  # 圖片名稱
+                    try:
+                        video_processing.grep_face(
+                            cutting_path, grep_face_path, rec_filename
+                        )
+                    except FileNotFoundError:
+                        continue
+
+            # 啟動多進程來處理 Facial-Expression-Recognition Model 的預測
             prediction_process = multiprocessing.Process(
                 target=prediction, args=(timestamp,)
             )
@@ -89,10 +107,10 @@ def upload():
 def prediction(timestamp):
     for n in range(5):
         # 假設每個 segment 最多有 5 張照片
-        for m in range(33, 37):
-            rec_filename = f"{timestamp}_segment_{n+1}_frame_{m}.jpg"  # 圖片名稱
+        for m in range(5):
+            rec_filename = f"{timestamp}_segment_{n+1}_frame_{m+1}.jpg"  # 圖片名稱
             try:
-                model.pred_faceExp(cutting_path, result_path, rec_filename)
+                model.pred_faceExp(grep_face_path, result_path, rec_filename)
                 break  # 找到第一張符合條件的照片後，跳出 m 迴圈
             except FileNotFoundError:
                 continue
