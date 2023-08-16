@@ -3,65 +3,7 @@ import subprocess
 
 import cv2
 
-
-# ffmpeg
-# Cutting
-def process_video(video_path, save_path):
-    # FFmpeg
-    # 指定每段影片的開始秒數和間隔
-    segment_length = 1.7
-    start_seconds = [5.5 + i * segment_length for i in range(5)]
-
-    # 使用ffmpeg進行影像擷取
-    for i, start_time in enumerate(start_seconds):
-        # 設定輸出圖片的檔案名稱
-        output_filename = f"{os.path.splitext(os.path.basename(video_path))[0]}_segment_{i+1}_frame_%d.jpg"
-        output_path = os.path.join(save_path, output_filename)
-
-        ffmpeg_cmd = [
-            "ffmpeg",
-            "-ss",  # 起始時間
-            str(start_time),
-            "-i",  # 輸入影片檔案路徑
-            video_path,
-            "-vf",  # 選擇特定幀數的影格
-            f"select='between(n,25,29)',setpts=N/FRAME_RATE/TB",
-            "-q:v",  # 視訊品質
-            "2",
-            "-frames:v",  # 影格數量
-            "5",
-            output_path,  # 輸出圖片的檔案路徑
-        ]
-
-        subprocess.run(ffmpeg_cmd, capture_output=True)
-
-
-# grep face
-def grep_face(pic_path, save_path, pic_name):
-    # 載入人臉偵測器
-    face_cascade = cv2.CascadeClassifier(
-        "app/model/haarcascade_frontalface_default.xml"
-    )
-
-    # 讀取照片
-    img = cv2.imread(os.path.join(pic_path, pic_name))
-
-    # 人脸偵測
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(
-        gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30)
-    )
-
-    # 擷取人臉並保存圖片
-    for x, y, w, h in faces:
-        # 儲存第一個偵測到的人臉
-        x, y, w, h = faces[0]
-        face_img = img[y : y + h, x : x + w]
-        face_save_path = os.path.join(save_path, pic_name)
-        cv2.imwrite(face_save_path, face_img)
-
-
-# Opencv
+# Way1: 轉編碼 -> opencv cutting
 # # 錄影檔編碼格式轉換
 # def convert_video_to_h264(input_file, output_file, output_frame_rate):
 #     # 讀取影片檔案
@@ -151,3 +93,61 @@ def grep_face(pic_path, save_path, pic_name):
 
 #     # 釋放資源並關閉影片檔案
 #     cap.release()
+
+
+
+# Way2: ffmpeg cutting -> opencv grep face
+# Cutting
+def process_video(video_path, save_path):
+    # FFmpeg
+    # 指定每段影片的開始秒數和間隔
+    segment_length = 1.7
+    start_seconds = [5.5 + i * segment_length for i in range(5)]
+
+    # 使用ffmpeg進行影像擷取
+    for i, start_time in enumerate(start_seconds):
+        # 設定輸出圖片的檔案名稱
+        output_filename = f"{os.path.splitext(os.path.basename(video_path))[0]}_segment_{i+1}_frame_%d.jpg"
+        output_path = os.path.join(save_path, output_filename)
+
+        ffmpeg_cmd = [
+            "ffmpeg",
+            "-ss",  # 起始時間
+            str(start_time),
+            "-i",  # 輸入影片檔案路徑
+            video_path,
+            "-vf",  # 選擇特定幀數的影格
+            f"select='between(n,25,29)',setpts=N/FRAME_RATE/TB",
+            "-q:v",  # 視訊品質
+            "2",
+            "-frames:v",  # 影格數量
+            "5",
+            output_path,  # 輸出圖片的檔案路徑
+        ]
+
+        subprocess.run(ffmpeg_cmd, capture_output=True)
+
+
+# grep face
+def grep_face(pic_path, save_path, pic_name):
+    # 載入人臉偵測器
+    face_cascade = cv2.CascadeClassifier(
+        "app/model/haarcascade_frontalface_default.xml"
+    )
+
+    # 讀取照片
+    img = cv2.imread(os.path.join(pic_path, pic_name))
+
+    # 人脸偵測
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(
+        gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30)
+    )
+
+    # 擷取人臉並保存圖片
+    for x, y, w, h in faces:
+        # 儲存第一個偵測到的人臉
+        x, y, w, h = faces[0]
+        face_img = img[y : y + h, x : x + w]
+        face_save_path = os.path.join(save_path, pic_name)
+        cv2.imwrite(face_save_path, face_img)

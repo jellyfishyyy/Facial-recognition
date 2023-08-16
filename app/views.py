@@ -63,6 +63,7 @@ def upload():
             filename = f"{timestamp}.webm"
             file.save(os.path.join(UPLOAD_FOLDER, filename))
 
+            # Way1: 轉編碼 -> opencv cutting
             # # 錄影檔編碼格式轉換
             # input_file = os.path.join(UPLOAD_FOLDER, filename)
             # output_file = os.path.join("app/static/output_video/", filename)
@@ -71,6 +72,8 @@ def upload():
             # # Cutting
             # video_processing.process_video(output_file, cutting_path)
 
+
+            # Way2: ffmpeg cutting -> opencv grep face
             # Cutting
             video_processing.process_video(
                 os.path.join(UPLOAD_FOLDER, filename), cutting_path
